@@ -14,7 +14,6 @@ import ru.malik.bank.StartBank.exception.UserAlreadyExistsException;
 import java.time.LocalDateTime;
 
 @Service
-
 public class UserService {
 
     private final UsersRepository usersRepository;

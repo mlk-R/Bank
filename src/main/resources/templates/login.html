@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <title>Вход</title>
     <style>
         body {
             background-color: #f4f7fc;
@@ -37,7 +37,6 @@
             font-weight: bold;
         }
         input[type="text"],
-        input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 12px 16px;
@@ -48,7 +47,6 @@
             transition: all 0.3s ease;
         }
         input[type="text"]:focus,
-        input[type="email"]:focus,
         input[type="password"]:focus {
             border-color: #007bff;
             outline: none;
@@ -85,21 +83,46 @@
 </head>
 <body>
 <div class="container">
-    <h2>Регистрация</h2>
+    <h2>Вход</h2>
 
-    <!-- Отображение сообщения об ошибке, если оно есть -->
-    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <!-- Ошибка при вводе неверных данных -->
+    <div id="errorMessage" class="error" style="display: none;"></div>
 
-    <form th:action="@{/register}" th:object="${registerRequest}" method="post">
-        <input type="text" th:field="*{username}" placeholder="Имя пользователя" required/>
-        <input type="email" th:field="*{email}" placeholder="Email" required/>
-        <input type="password" th:field="*{password}" placeholder="Пароль (минимум 8 символов)" required/>
-        <button type="submit">Зарегистрироваться</button>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Имя пользователя" required />
+        <input type="password" id="password" placeholder="Пароль" required />
+        <button type="submit">Войти</button>
     </form>
 
     <div class="form-footer">
-        <p>Уже есть аккаунт? <a href="/login">Войдите</a></p>
+        <p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
     </div>
 </div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async (event) => {
+        event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        let errorMessage = document.getElementById("errorMessage");
+
+        let response = await fetch("http://localhost:8080/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+            let data = await response.json();
+            localStorage.setItem("token", data.token); // Сохраняем токен в LocalStorage
+            window.location.href = "/home/hello"; // Перенаправляем на защищенную страницу
+        } else {
+            errorMessage.style.display = "block";
+            errorMessage.textContent = "Неверный логин или пароль";
+        }
+    });
+</script>
+
 </body>
 </html>

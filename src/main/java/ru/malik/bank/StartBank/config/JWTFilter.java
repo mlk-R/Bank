@@ -39,6 +39,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             if (jwt.isBlank()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             } else {
                 try {
                     String username = jwtUtil.validateTokenAndRetrieveClaims(jwt);

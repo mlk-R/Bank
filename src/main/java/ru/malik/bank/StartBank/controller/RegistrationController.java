@@ -6,16 +6,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import ru.malik.bank.StartBank.dto.RegisterRequest;
-import ru.malik.bank.StartBank.entity.User;
+import ru.malik.bank.StartBank.exception.UserAlreadyExistsException;
+import ru.malik.bank.StartBank.exception.UserNotCreatedException;
 import ru.malik.bank.StartBank.service.UserService;
 
 @Controller
-@RequestMapping("/api/auth")
 public class RegistrationController {
 
     private final UserService userService;
+
 
     @Autowired
     public RegistrationController(UserService userService) {
@@ -35,10 +35,13 @@ public class RegistrationController {
     public String proccessRegistration(@ModelAttribute("registerRequest") RegisterRequest registerRequest, Model model) {
         try {
             userService.registerUser(registerRequest);
-            return "redirect:/login?registered";
+            return "redirect:/login?registered"; // Редирект на страницу логина после успешной регистрации
+        } catch (UserAlreadyExistsException | UserNotCreatedException e) {
+            model.addAttribute("error", e.getMessage());  // Добавляем ошибку в модель
+            return "register";  // Возвращаемся на страницу регистрации с сообщением об ошибке
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            return "register";
+            model.addAttribute("error", "Произошла ошибка: " + e.getMessage());  // Добавляем общую ошибку
+            return "register";  // Возвращаемся на страницу регистрации с общей ошибкой
         }
     }
 }
