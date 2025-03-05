@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Hello</title>
 </head>
 <body>
 Hello man
+
+
+<script>
+    // Извлекаем токен из localStorage
+    const token = localStorage.getItem('token');
+    if (!token) {
+        // Если токена нет, перенаправляем на страницу логина
+        window.location.href = '/login';
+    }
+</script>
+
+
 </body>
 </html>

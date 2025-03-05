@@ -2,14 +2,18 @@ package ru.malik.bank.StartBank.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.malik.bank.StartBank.dto.LoginRequest;
 import ru.malik.bank.StartBank.dto.RegisterRequest;
 import ru.malik.bank.StartBank.entity.Role;
 import ru.malik.bank.StartBank.entity.User;
 import ru.malik.bank.StartBank.repository.UsersRepository;
 import ru.malik.bank.StartBank.exception.UserAlreadyExistsException;
+
 
 import java.time.LocalDateTime;
 
@@ -25,26 +29,37 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    //Блок регистрации пользователя
     @Transactional
-    public void registerUser(RegisterRequest request) {
-        if (usersRepository.existsByUsername(request.getUsername())) {
+    public User registerUser(RegisterRequest request) {
+        if (usersRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
         }
 
-        // Создаем нового пользователя на основе DTO
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword()); // Сразу пароля не шифруем!
-
-        enrichUser(user);  // Применяем шифрование пароля и другие настройки
-
-        usersRepository.save(user);
-    }
-
-    private void enrichUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreateAt(LocalDateTime.now());
-        user.setRole(Role.USER); // Присваиваем роль по умолчанию
+        user.setRole(Role.USER);
+
+        return usersRepository.save(user);
+    }
+
+    //Блок Авторизации пользователя
+    @Transactional
+    public void loginUser(LoginRequest request) {
+        if (!usersRepository.existsByUsername(request.getUsername())) {
+            throw new UsernameNotFoundException("Пользователь с именем "
+                    + request.getUsername() + " не найден");
+        }
+        User user = usersRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с именем "
+                        + request.getUsername() + " не найден"));
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Неверный пароль");
+        }
+
+        System.out.println("Пользователь " + user.getUsername() + " успешно вошёл в систему");
     }
 }

@@ -30,38 +30,32 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Публичные эндпоинты для аутентификации и регистрации
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/register", "/login").permitAll()
-                        // Остальные запросы требуют аутентификации
+                        .requestMatchers("/api/auth/login", "/api/auth/registration", "/register", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                // Добавляем JWT-фильтр перед фильтром аутентификации
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(withDefaults()); // Если нужна базовая поддержка, можно оставить или убрать
-
+                .httpBasic(withDefaults());
         return http.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
+        AuthenticationManagerBuilder authManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder
-                .userDetailsService(customUserDetailsService) // Используем кастомный UserDetailsService
-                .passwordEncoder(passwordEncoder()); // Используем BCryptPasswordEncoder
-
-        return authenticationManagerBuilder.build();
+        authManagerBuilder
+                .userDetailsService(customUserDetailsService)
+                .passwordEncoder(passwordEncoder());
+        return authManagerBuilder.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Используем BCryptPasswordEncoder для безопасности
+        return new BCryptPasswordEncoder();
     }
 }

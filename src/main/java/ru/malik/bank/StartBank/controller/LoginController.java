@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.malik.bank.StartBank.dto.RegisterRequest;
+import ru.malik.bank.StartBank.dto.LoginRequest;
 import ru.malik.bank.StartBank.service.UserService;
 
 @Controller
@@ -25,25 +25,17 @@ public class LoginController {
         if (registered != null) {
             model.addAttribute("message", "Вы успешно зарегистрировались! Пожалуйста, войдите в систему.");
         }
-        return "login"; // Возвращаем страницу логина
+        return "login"; // Отображение страницы логина
     }
 
-//    @PostMapping("/login")
-//    public String processLogin(@RequestParam("username") String username,
-//                               @RequestParam("password") String password,
-//                               Model model) {
-//        try {
-//            // TODO UserService содержит логику аутентификации
-//            boolean isAuthenticated = userService.authenticateUser(username, password);
-//            if (isAuthenticated) {
-//                return "redirect:/home"; // Переход на главную страницу после успешного логина
-//            } else {
-//                model.addAttribute("error", "Неверное имя пользователя или пароль");
-//                return "login"; // Возвращаемся на страницу логина с ошибкой
-//            }
-//        } catch (Exception e) {
-//            model.addAttribute("error", "Произошла ошибка при входе: " + e.getMessage());
-//            return "login"; // Возвращаемся на страницу логина с общей ошибкой
-//        }
-//    }
+    @PostMapping("/login")
+    public String processLogin(@ModelAttribute("loginRequest") LoginRequest loginRequest, Model model) {
+        try {
+            userService.loginUser(loginRequest);
+            return "redirect:/home/hello";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "login";
+        }
+    }
 }

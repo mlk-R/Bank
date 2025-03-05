@@ -14,15 +14,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import ru.malik.bank.StartBank.dto.LoginRequest;
+import ru.malik.bank.StartBank.dto.LoginResponse;
 import ru.malik.bank.StartBank.dto.RegisterRequest;
+import ru.malik.bank.StartBank.dto.RegisterResponse;
 import ru.malik.bank.StartBank.entity.User;
 import ru.malik.bank.StartBank.security.JWTUtil;
 import ru.malik.bank.StartBank.service.UserService;
 import ru.malik.bank.StartBank.exception.UserNotCreatedException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -42,12 +40,10 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<RegisterRequest> register(@RequestBody @Valid RegisterRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder errors = new StringBuilder();
-
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            for (FieldError fieldError : fieldErrors) {
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
                 errors.append(fieldError.getField())
                         .append(":")
                         .append(fieldError.getDefaultMessage())
@@ -55,38 +51,31 @@ public class AuthController {
             }
             throw new UserNotCreatedException(errors.toString());
         }
-
-    User user = convertRegisterRequestToUser(request);
-    userService.registerUser(request);
-    return ResponseEntity.ok(convertUserToRegisterRequest(user));
+        // Регистрация пользователя и получение сохранённого объекта
+        User user = userService.registerUser(request);
+        RegisterResponse response = modelMapper.map(user, RegisterResponse.class);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String token = jwtUtil.generateJWTToken(loginRequest.getUsername());
+            String token = jwtUtil.generateToken(loginRequest.getUsername());
 
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);  // Возвращаем токен клиенту
+            // Формируем ответ с токеном
+            LoginResponse response = new LoginResponse();
+            response.setUsername(loginRequest.getUsername());
+            response.setToken(token);
+
+            // Дополнительно можно логировать успешный вход
+            userService.loginUser(loginRequest);
             return ResponseEntity.ok(response);
-
-
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
-    }
-
-    //Использование Маппера для DTO регистрации
-
-    private User convertRegisterRequestToUser(RegisterRequest request) {
-        return modelMapper.map(request, User.class);
-    }
-
-    private RegisterRequest convertUserToRegisterRequest(User user) {
-        return modelMapper.map(user, RegisterRequest.class);
     }
 }
