@@ -1,13 +1,10 @@
-package ru.malik.bank.StartBank.controller;
+package ru.malik.bank.StartBank.exception;
 
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.malik.bank.StartBank.exception.UserAlreadyExistsException;
-import ru.malik.bank.StartBank.exception.UserErrorResponse;
-import ru.malik.bank.StartBank.exception.UserNotCreatedException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

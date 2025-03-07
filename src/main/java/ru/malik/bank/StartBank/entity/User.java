@@ -1,10 +1,12 @@
 package ru.malik.bank.StartBank.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import ru.malik.bank.StartBank.entity.enumEntity.Role;
 
 
 import java.time.LocalDateTime;
@@ -39,6 +41,7 @@ public class User {
 
     //Отношения к другим таблицам
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Account> accounts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

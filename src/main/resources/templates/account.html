@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2, h3 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        form {
+            margin-top: 10px;
+            display: inline;
+        }
+        input[type="number"] {
+            padding: 8px;
+            width: 120px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Личный кабинет пользователя <span th:text="${user.username}"></span></h2>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+
+    <h3>Ваши счета</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Тип счета</th>
+            <th>Номер карты</th>
+            <th>CVV</th>
+            <th>Срок действия</th>
+            <th>Баланс</th>
+            <th>Пополнение</th>
+            <th>Операции</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account : ${accounts}">
+            <td th:text="${account.accountType}"></td>
+            <td th:text="${account.cardNumber}"></td>
+            <td th:text="${account.cvv}"></td>
+            <td th:text="${#temporals.format(account.expirationDate, 'MM/yy')}"></td>
+            <td th:text="${account.balance}"></td>
+            <td>
+                <form th:action="@{'/account/top-up/' + ${account.id}}" method="post">
+                    <input type="number" step="0.01" name="amount" placeholder="Сумма" required/>
+                    <button type="submit">Пополнить</button>
+                </form>
+            </td>
+            <td>
+                <!-- Форма для вывода средств -->
+                <form th:action="@{'/account/withdraw/' + ${account.id}}" method="post">
+                    <input type="number" step="0.01" name="amount" placeholder="Сумма" required/>
+                    <button type="submit">Вывести</button>
+                </form>
+
+                <!-- Ссылка на перевод средств -->
+                <a th:href="@{'/account/' + ${account.id} + '/transaction'}">Перевести</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Открыть новый счет</h3>
+    <form action="/account/open" method="post">
+        <label for="accountType">Тип аккаунта:</label>
+        <select id="accountType" name="accountType">
+            <option value="DEBIT">Дебетовый</option>
+            <option value="CREDIT">Кредитный</option>
+        </select>
+        <input type="hidden" name="initialBalance" value="0.00">
+        <button type="submit">Открыть аккаунт</button>
+    </form>
+
+    <a href="/logout">Выйти</a>
+</div>
+</body>
+</html>

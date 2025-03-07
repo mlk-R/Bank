@@ -7,9 +7,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.malik.bank.StartBank.dto.LoginRequest;
-import ru.malik.bank.StartBank.dto.RegisterRequest;
-import ru.malik.bank.StartBank.entity.Role;
+import ru.malik.bank.StartBank.dto.loginRegister.LoginRequest;
+import ru.malik.bank.StartBank.dto.loginRegister.RegisterRequest;
+import ru.malik.bank.StartBank.entity.enumEntity.Role;
 import ru.malik.bank.StartBank.entity.User;
 import ru.malik.bank.StartBank.repository.UsersRepository;
 import ru.malik.bank.StartBank.exception.UserAlreadyExistsException;
@@ -27,6 +27,16 @@ public class UserService {
     public UserService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return usersRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    @Transactional(readOnly = true)
+    public User findByUsernameWithAccounts(String username) {
+        return usersRepository.findByUsernameWithAccounts(username);
     }
 
     //Блок регистрации пользователя

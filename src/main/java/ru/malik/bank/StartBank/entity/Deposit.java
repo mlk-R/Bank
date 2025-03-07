@@ -2,6 +2,9 @@ package ru.malik.bank.StartBank.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -19,12 +22,15 @@ public class Deposit {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Positive(message = "Сумма депозита должна быть больше 0")
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Min(value = 1, message = "Срок депозита должен быть больше 0")
     @Column(name = "term", nullable = false)
     private Integer term;
 
+    @PositiveOrZero(message = "Процентная ставка не может быть отрицательной")
     @Column(name = "interest_rate", nullable = false)
     private BigDecimal interestRate;
 

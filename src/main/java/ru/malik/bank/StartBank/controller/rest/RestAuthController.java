@@ -1,4 +1,4 @@
-package ru.malik.bank.StartBank.controller;
+package ru.malik.bank.StartBank.controller.rest;
 
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -13,10 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import ru.malik.bank.StartBank.dto.LoginRequest;
-import ru.malik.bank.StartBank.dto.LoginResponse;
-import ru.malik.bank.StartBank.dto.RegisterRequest;
-import ru.malik.bank.StartBank.dto.RegisterResponse;
+import ru.malik.bank.StartBank.dto.loginRegister.LoginRequest;
+import ru.malik.bank.StartBank.dto.loginRegister.LoginResponse;
+import ru.malik.bank.StartBank.dto.loginRegister.RegisterRequest;
+import ru.malik.bank.StartBank.dto.loginRegister.RegisterResponse;
 import ru.malik.bank.StartBank.entity.User;
 import ru.malik.bank.StartBank.security.JWTUtil;
 import ru.malik.bank.StartBank.service.UserService;
@@ -24,7 +24,7 @@ import ru.malik.bank.StartBank.exception.UserNotCreatedException;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class RestAuthController {
 
     private final UserService userService;
     private final ModelMapper modelMapper;
@@ -32,7 +32,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthController(UserService userService, ModelMapper modelMapper, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
+    public RestAuthController(UserService userService, ModelMapper modelMapper, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
         this.userService = userService;
         this.modelMapper = modelMapper;
         this.jwtUtil = jwtUtil;

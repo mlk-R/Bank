@@ -2,7 +2,9 @@ package ru.malik.bank.StartBank.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
+import ru.malik.bank.StartBank.entity.enumEntity.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,9 +21,11 @@ public class Transaction {
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private String type;
+    private TransactionType type;
 
+    @Positive(message = "Сумма транзакции должна быть больше 0")
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
@@ -31,10 +35,11 @@ public class Transaction {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+
     public Transaction() {
     }
 
-    public Transaction(Account account, String type, BigDecimal amount, String status, LocalDateTime createdAt) {
+    public Transaction(Account account, TransactionType type, BigDecimal amount, String status, LocalDateTime createdAt) {
         this.account = account;
         this.type = type;
         this.amount = amount;
@@ -58,11 +63,11 @@ public class Transaction {
         this.account = account;
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TransactionType type) {
         this.type = type;
     }
 

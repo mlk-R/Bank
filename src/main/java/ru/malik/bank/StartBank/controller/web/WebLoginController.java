@@ -1,4 +1,4 @@
-package ru.malik.bank.StartBank.controller;
+package ru.malik.bank.StartBank.controller.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.malik.bank.StartBank.dto.LoginRequest;
+import ru.malik.bank.StartBank.dto.loginRegister.LoginRequest;
 import ru.malik.bank.StartBank.service.UserService;
 
 @Controller
-public class LoginController {
+public class WebLoginController {
 
     private final UserService userService;
 
     @Autowired
-    public LoginController(UserService userService) {
+    public WebLoginController(UserService userService) {
         this.userService = userService;
     }
 
@@ -32,7 +32,7 @@ public class LoginController {
     public String processLogin(@ModelAttribute("loginRequest") LoginRequest loginRequest, Model model) {
         try {
             userService.loginUser(loginRequest);
-            return "redirect:/home/hello";
+            return "redirect:/account";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "login";

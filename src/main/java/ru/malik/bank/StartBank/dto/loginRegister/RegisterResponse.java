@@ -1,4 +1,4 @@
-package ru.malik.bank.StartBank.dto;
+package ru.malik.bank.StartBank.dto.loginRegister;
 
 public class RegisterResponse {
     private String username;

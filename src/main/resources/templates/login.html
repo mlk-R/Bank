@@ -95,7 +95,7 @@
     </form>
 
     <div class="form-footer">
-        <p>Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+        <p>Нет аккаунта? <a th:href="@{/register}">Зарегистрироваться</a></p>
     </div>
 </div>
 
@@ -107,16 +107,18 @@
         let password = document.getElementById("password").value;
         let errorMessage = document.getElementById("errorMessage");
 
-        let response = await fetch("http://localhost:8080/api/auth/login", {
+        let response = await fetch("/api/auth/login", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({ username, password })
         });
 
         if (response.ok) {
             let data = await response.json();
-            localStorage.setItem("token", data.token); // Сохраняем токен в LocalStorage
-            window.location.href = "/home/hello"; // Перенаправляем на защищенную страницу
+            localStorage.setItem("token", data.token); // Сохраняем токен
+            window.location.href = "/account"; // Редирект на страницу аккаунта
         } else {
             errorMessage.style.display = "block";
             errorMessage.textContent = "Неверный логин или пароль";
