@@ -50,8 +50,6 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setCreateAt(LocalDateTime.now());
-
-
         user.setRole(Role.USER);
 
         System.out.println("USER CREATING afterALL");
