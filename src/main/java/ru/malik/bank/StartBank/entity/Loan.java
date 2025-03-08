@@ -2,6 +2,8 @@ package ru.malik.bank.StartBank.entity;
 
 
 import jakarta.persistence.*;
+import ru.malik.bank.StartBank.entity.enumEntity.Status;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -23,7 +25,8 @@ public class Loan {
     private BigDecimal interestRate;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -31,7 +34,7 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(User user, BigDecimal amount, BigDecimal interestRate, String status, LocalDateTime createdAt) {
+    public Loan(User user, BigDecimal amount, BigDecimal interestRate, Status status, LocalDateTime createdAt) {
         this.user = user;
         this.amount = amount;
         this.interestRate = interestRate;
@@ -71,11 +74,11 @@ public class Loan {
         this.interestRate = interestRate;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

@@ -2,14 +2,15 @@ package ru.malik.bank.StartBank.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.malik.bank.StartBank.entity.Transaction;
 import ru.malik.bank.StartBank.exception.ResourceNotFoundException;
 import ru.malik.bank.StartBank.repository.TransactionRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@Transactional
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;

@@ -45,13 +45,14 @@ public class UserService {
         if (usersRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
         }
-
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setCreateAt(LocalDateTime.now());
         user.setRole(Role.USER);
+
+        System.out.println("USER CREATING afterALL");
 
         return usersRepository.save(user);
     }
