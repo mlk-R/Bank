@@ -33,7 +33,7 @@ public class LoanService {
         this.transactionRepository = transactionRepository;
     }
     @Transactional
-    public Loan takeLoan(Loan loan, BigDecimal amount, User user) {
+    public Loan createLoan(Loan loan, BigDecimal amount, User user) {
         loan.setUser(user);
         loan.setAmount(amount);
         loan.setInterestRate(BigDecimal.valueOf(10));
@@ -65,8 +65,12 @@ public class LoanService {
         return loanRepository.findAll();
     }
 
-    public List<User> getLoanByUserId(User user) {
-        return loanRepository.findByUser(user);
+    // Получение кредитов пользователя
+    public List<Loan> getLoansByUserId(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        return loanRepository.findByUserId(userId);
     }
 
     @Transactional

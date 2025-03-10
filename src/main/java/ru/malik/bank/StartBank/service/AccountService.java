@@ -23,11 +23,13 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+    private final TransactionService transactionService;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository) {
+    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository, TransactionService transactionService) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.transactionService = transactionService;
     }
 
     @Transactional(readOnly = true)

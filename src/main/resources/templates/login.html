@@ -118,7 +118,7 @@
         if (response.ok) {
             let data = await response.json();
             localStorage.setItem("token", data.token); // Сохраняем токен
-            window.location.href = "/account"; // Редирект на страницу аккаунта
+            window.location.href = "/home"; // Редирект на страницу аккаунта
         } else {
             errorMessage.style.display = "block";
             errorMessage.textContent = "Неверный логин или пароль";

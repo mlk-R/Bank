@@ -3,10 +3,15 @@ package ru.malik.bank.StartBank.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.malik.bank.StartBank.entity.Account;
 import ru.malik.bank.StartBank.entity.Transaction;
+import ru.malik.bank.StartBank.entity.enumEntity.Status;
+import ru.malik.bank.StartBank.entity.enumEntity.TransactionType;
 import ru.malik.bank.StartBank.exception.ResourceNotFoundException;
 import ru.malik.bank.StartBank.repository.TransactionRepository;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,13 +26,12 @@ public class TransactionService {
     }
 
     // Создание новой транзакции
-    public Transaction createTransaction(Transaction transaction) {
+    public Transaction createTransaction(Transaction transaction, Account account, BigDecimal amount) {
+        transaction.setAccount(account);
+        transaction.setAmount(amount);
+        transaction.setStatus("CREATED");
+        transaction.setCreatedAt(LocalDateTime.now());
         return transactionRepository.save(transaction);
-    }
-
-    // Получение всех транзакций всех пользователей
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
     }
 
     // Получение транзакции по id

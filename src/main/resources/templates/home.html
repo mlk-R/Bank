@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Главная</title>
+  <style>
+    body {
+      background-color: #f4f7fc;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .nav-links a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #007bff;
+      font-size: 18px;
+    }
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Добро пожаловать, <span th:text="${user.username}">User</span>!</h1>
+  <div class="nav-links">
+    <a th:href="@{/account}">Счета</a>
+    <a th:href="@{/user/{userId}/deposit(userId=${user.id})}">Депозиты</a>
+    <a th:href="@{/user/{userId}/loan(userId=${user.id})}">Кредиты</a>
+  </div>
+</div>
+</body>
+</html>

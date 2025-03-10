@@ -3,6 +3,8 @@ package ru.malik.bank.StartBank.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import ru.malik.bank.StartBank.exception.UserAlreadyExistsException;
 
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -32,6 +35,11 @@ public class UserService {
     public User findByUsername(String username) {
         return usersRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findById(Long id) {
+        return usersRepository.findById(id);
     }
 
     @Transactional(readOnly = true)
@@ -72,5 +80,15 @@ public class UserService {
         }
 
         System.out.println("Пользователь " + user.getUsername() + " успешно вошёл в систему");
+    }
+
+    @Transactional(readOnly = true)
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            String username = ((UserDetails) principal).getUsername();
+            return findByUsername(username);
+        }
+        return null;
     }
 }

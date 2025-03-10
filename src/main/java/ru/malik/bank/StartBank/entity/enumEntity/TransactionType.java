@@ -9,5 +9,6 @@ public enum TransactionType {
     CREDIT_PAYMENT,         // Погашение кредита
     REFUND,                 // Возврат средств
     EXCHANGE,               // Обмен валюты
-    INTERBANK_TRANSFER;     // Межбанковский перевод
+    INTERBANK_TRANSFER,     // Межбанковский перевод
+    DEPOSIT_WITHDRAWAL;
 }

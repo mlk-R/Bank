@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
+import ru.malik.bank.StartBank.entity.enumEntity.Status;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,16 +38,12 @@ public class Deposit {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public Deposit() {
-    }
+    // Дополнительное поле для статуса депозита (например, ACTIVE, CLOSED)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Status status;
 
-    public Deposit(User user, BigDecimal amount, Integer term, BigDecimal interestRate, LocalDateTime createdAt) {
-        this.user = user;
-        this.amount = amount;
-        this.term = term;
-        this.interestRate = interestRate;
-        this.createdAt = createdAt;
-    }
+    // Геттеры и сеттеры
 
     public Long getId() {
         return id;
@@ -94,5 +91,13 @@ public class Deposit {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
