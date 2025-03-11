@@ -11,6 +11,7 @@
             background: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
         }
         h2, h3 {
             text-align: center;
@@ -42,14 +43,30 @@
             border-radius: 4px;
             color: #fff;
             cursor: pointer;
-            margin-left: 5px;
+            margin: 10px;
         }
         button:hover {
             background-color: #0056b3;
         }
+        .logout-btn {
+            background-color: #dc3545;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .home-btn {
+            background-color: #28a745;
+        }
+        .home-btn:hover {
+            background-color: #218838;
+        }
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
         a {
-            display: block;
-            text-align: center;
+            display: inline-block;
             margin-top: 20px;
             color: #007bff;
             text-decoration: none;
@@ -61,6 +78,11 @@
 </head>
 <body>
 <div class="container">
+    <!-- Кнопка "Выйти из аккаунта" -->
+    <form class="top-right" action="/logout" method="post">
+        <button type="submit" class="logout-btn">Выйти из аккаунта</button>
+    </form>
+
     <h2>Личный кабинет пользователя <span th:text="${user.username}"></span></h2>
     <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
 
@@ -91,13 +113,10 @@
                 </form>
             </td>
             <td>
-                <!-- Форма для вывода средств -->
                 <form th:action="@{'/account/withdraw/' + ${account.id}}" method="post">
                     <input type="number" step="0.01" name="amount" placeholder="Сумма" required/>
                     <button type="submit">Вывести</button>
                 </form>
-
-                <!-- Ссылка на перевод средств -->
                 <a th:href="@{'/account/' + ${account.id} + '/transaction'}">Перевести</a>
             </td>
         </tr>
@@ -115,7 +134,10 @@
         <button type="submit">Открыть аккаунт</button>
     </form>
 
-    <a href="/logout">Выйти</a>
+    <!-- Кнопка "Вернуться на главную" -->
+    <a href="/home">
+        <button class="home-btn">Вернуться на главную</button>
+    </a>
 </div>
 </body>
 </html>

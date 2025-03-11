@@ -1,64 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Кредиты</title>
   <style>
-    body {
-      background-color: #f4f7fc;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 800px;
-      margin: 30px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    h2, h3 {
-      text-align: center;
-    }
-    .nav-links {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .nav-links a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #007bff;
-    }
-    .nav-links a:hover {
-      text-decoration: underline;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-    form input {
-      padding: 8px;
-      margin: 5px;
-      width: 150px;
-    }
-    form button {
-      padding: 8px 16px;
-      background-color: #007bff;
-      border: none;
-      border-radius: 4px;
-      color: #fff;
-      cursor: pointer;
-    }
-    form button:hover {
-      background-color: #0056b3;
-    }
+    body { background-color: #f4f7fc; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .container { max-width: 800px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2, h3 { text-align: center; }
+    .nav-links { text-align: center; margin-bottom: 20px; }
+    .nav-links a { margin: 0 10px; text-decoration: none; color: #007bff; }
+    .nav-links a:hover { text-decoration: underline; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+    form input, form select { padding: 8px; margin: 5px; width: 150px; }
+    form button { padding: 8px 16px; background-color: #007bff; border: none; border-radius: 4px; color: #fff; cursor: pointer; }
+    form button:hover { background-color: #0056b3; }
   </style>
 </head>
 <body>
@@ -77,6 +33,7 @@
       <th>Процентная ставка</th>
       <th>Статус</th>
       <th>Дата оформления</th>
+      <th>Оплата кредита</th>
     </tr>
     </thead>
     <tbody>
@@ -86,12 +43,22 @@
       <td th:text="${loan.interestRate}"></td>
       <td th:text="${loan.status}"></td>
       <td th:text="${#temporals.format(loan.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+      <td>
+        <form th:action="@{'/user/' + ${user.id} + '/loan/' + ${loan.id} + '/pay'}" method="post">
+          <select name="accountId" required>
+            <option value="" disabled selected>Выберите карту</option>
+            <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.cardNumber + ' (Баланс: ' + account.balance + ')'}"></option>
+          </select>
+          <input type="number" step="0.01" name="paymentAmount" placeholder="Сумма оплаты" required>
+          <button type="submit">Оплатить</button>
+        </form>
+      </td>
     </tr>
     </tbody>
   </table>
 
   <h3>Оформить кредит</h3>
-  <form th:action="@{/user/{userId}/loan/take(userId=${user.id})}" method="post">
+  <form th:action="@{'/user/' + ${user.id} + '/loan/take'}" method="post">
     <input type="number" step="0.01" name="amount" placeholder="Сумма кредита" required>
     <button type="submit">Оформить кредит</button>
   </form>

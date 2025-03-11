@@ -37,13 +37,34 @@ public class DepositService {
 
     // Метод для открытия нового депозита
     @Transactional
-    public Deposit createDeposit(Deposit deposit, BigDecimal amount, User user) {
+    public Deposit createDeposit(BigDecimal amount, Integer term, Long accountId, User user) {
+        // Получаем карту по accountId
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Карта не найдена"));
+
+        // Проверяем, принадлежит ли карта пользователю
+        if (!account.getUser().equals(user)) {
+            throw new RuntimeException("Карта не принадлежит этому пользователю");
+        }
+
+        // Проверяем, достаточно ли средств на карте для открытия депозита
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new RuntimeException("Недостаточный баланс на карте");
+        }
+
+        // Списываем сумму депозита с баланса карты
+        account.setBalance(account.getBalance().subtract(amount));
+        accountRepository.save(account);
+
+        // Создаём новый депозит
+        Deposit deposit = new Deposit();
         deposit.setUser(user);
         deposit.setAmount(amount);
-        // Например, для депозита процент может быть другим, например, 5%
-        deposit.setInterestRate(BigDecimal.valueOf(5));
+        deposit.setTerm(term);
+        deposit.setInterestRate(BigDecimal.valueOf(5)); // процент для депозита
         deposit.setStatus(Status.ACTIVE);
         deposit.setCreatedAt(LocalDateTime.now());
+
         return depositRepository.save(deposit);
     }
 

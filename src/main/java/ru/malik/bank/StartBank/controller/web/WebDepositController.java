@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.malik.bank.StartBank.entity.Account;
 import ru.malik.bank.StartBank.entity.Deposit;
 import ru.malik.bank.StartBank.entity.User;
+import ru.malik.bank.StartBank.service.AccountService;
 import ru.malik.bank.StartBank.service.DepositService;
 import ru.malik.bank.StartBank.service.UserService;
 
@@ -19,46 +21,47 @@ public class WebDepositController {
 
     private final DepositService depositService;
     private final UserService userService;
+    private final AccountService accountService;
 
     @Autowired
-    public WebDepositController(DepositService depositService, UserService userService) {
+    public WebDepositController(DepositService depositService, UserService userService, AccountService accountService) {
         this.depositService = depositService;
         this.userService = userService;
+        this.accountService = accountService;
     }
 
-    // GET-метод для отображения страницы депозитов пользователя
     @GetMapping()
     public String depositPage(@PathVariable Long userId, Model model) {
         Optional<User> userOptional = userService.findById(userId);
         if (userOptional.isEmpty()) {
-            return "error"; // Обработка случая, когда пользователь не найден
+            return "error"; // Если пользователь не найден
         }
         User user = userOptional.get();
-        model.addAttribute("user", user);
         List<Deposit> deposits = depositService.getDepositsByUserId(userId);
+        List<Account> accounts = accountService.getAccountsByUser(user); // Загружаем карты пользователя
+
+        model.addAttribute("user", user);
         model.addAttribute("deposits", deposits);
-        return "deposits"; // Имя Thymeleaf-шаблона для отображения депозитов (deposits.html)
+        model.addAttribute("accounts", accounts);
+
+        return "deposits";
     }
 
-    // POST-метод для открытия нового депозита
     @PostMapping("/take")
     public String takeDeposit(@PathVariable Long userId,
                               @RequestParam("amount") BigDecimal amount,
-                              @RequestParam("term") Integer term) {
+                              @RequestParam("term") Integer term,
+                              @RequestParam("accountId") Long accountId) {
         Optional<User> userOptional = userService.findById(userId);
         if (userOptional.isEmpty()) {
             return "error";
         }
         User user = userOptional.get();
 
-        // Создаём новый депозит и заполняем необходимые поля
-        Deposit deposit = new Deposit();
-        deposit.setTerm(term); // срок депозита (например, количество месяцев)
-        depositService.createDeposit(deposit, amount, user);
-        return "redirect:/user/" + userId + "/deposits";
+        depositService.createDeposit(amount, term, accountId, user);
+        return "redirect:/user/" + userId + "/deposit";
     }
 
-    // POST-метод для снятия средств с депозита
     @PostMapping("/{depositId}/withdraw")
     public String withdrawDeposit(@PathVariable Long userId,
                                   @PathVariable Long depositId,
@@ -71,12 +74,12 @@ public class WebDepositController {
         }
         User user = userOptional.get();
         try {
-            Deposit updatedDeposit = depositService.withdrawDeposit(depositId, accountId, withdrawalAmount, user);
+            depositService.withdrawDeposit(depositId, accountId, withdrawalAmount, user);
             model.addAttribute("message", "Снятие средств с депозита прошло успешно!");
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
-            return "error"; // Страница с сообщением об ошибке снятия средств
+            return "error";
         }
-        return "redirect:/user/" + userId + "/deposits";
+        return "redirect:/user/" + userId + "/deposit";
     }
 }

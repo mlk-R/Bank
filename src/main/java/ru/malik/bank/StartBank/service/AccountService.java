@@ -152,7 +152,7 @@ public class AccountService {
         transactionRepository.save(targetTransaction);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Account> getAccountsByUser(User user) {
         return accountRepository.findByUser(user);
     }

@@ -18,20 +18,42 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       text-align: center;
+      position: relative;
     }
     .nav-links a {
       margin: 0 10px;
       text-decoration: none;
       color: #007bff;
       font-size: 18px;
+      padding: 10px;
     }
     .nav-links a:hover {
       text-decoration: underline;
+    }
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background-color: #dc3545;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .logout-btn:hover {
+      background-color: #c82333;
     }
   </style>
 </head>
 <body>
 <div class="container">
+  <!-- Кнопка "Выйти из аккаунта" -->
+  <form action="/logout" method="post">
+    <button type="submit" class="logout-btn">Выйти</button>
+  </form>
+
   <h1>Добро пожаловать, <span th:text="${user.username}">User</span>!</h1>
   <div class="nav-links">
     <a th:href="@{/account}">Счета</a>
