@@ -30,6 +30,7 @@ public class WebLoginController {
 
     @PostMapping("/login")
     public String processLogin(@ModelAttribute("loginRequest") LoginRequest loginRequest, Model model) {
+        System.out.println("Login attempt: " + loginRequest.getUsername());
         try {
             userService.loginUser(loginRequest);
             return "redirect:/account";

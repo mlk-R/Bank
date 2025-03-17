@@ -13,6 +13,7 @@ public class LoginRequest {
     @Size(min = 8, message = "Пароль должен содержать 8 символов!")
     private String password;
 
+
     public String getUsername() {
         return username;
     }
