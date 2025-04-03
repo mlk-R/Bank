@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: StartBank
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/Bank
+    username: postgres
+    password: aXxer138
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+jwt_secret: "ThisIsASecretKeyThatIsLongEnoughToBeSecure123!"

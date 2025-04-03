@@ -2,6 +2,10 @@ package ru.malik.bank.StartBank.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +35,14 @@ public class UserService {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
+    @Transactional(readOnly = true)
+    public Page<User> getUsers (int page, int size, String sortField, String sortDirection) {
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortField));
+        return usersRepository.findAll(pageable);
+    }
+
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
         return usersRepository.findByUsername(username)
