@@ -15,5 +15,8 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+  docker:
+    compose:
+      enabled: false
 
 jwt_secret: ${JWT_SECRET}

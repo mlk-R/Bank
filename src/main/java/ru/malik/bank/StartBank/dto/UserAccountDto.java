@@ -1,43 +1,23 @@
-package ru.malik.bank.StartBank.entity;
-
-import jakarta.persistence.*;
-
-import org.hibernate.annotations.Immutable;
-import ru.malik.bank.StartBank.util.UserAccountId;
+package ru.malik.bank.StartBank.dto;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Immutable
-public class UserAccountView {
-
-    @EmbeddedId
-    private UserAccountId id;
-
-    @Column(name = "username")
+public class UserAccountDto {
+    private Long userId;
     private String username;
-
-    @Column(name = "email")
     private String email;
-
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "balance")
+    private Long accountId;
     private Double balance;
-
-    @Column(name = "account_type")
     private String accountType;
-
-    @Column(name = "card_number")
     private String cardNumber;
 
-    public UserAccountId getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(UserAccountId id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
@@ -62,6 +42,14 @@ public class UserAccountView {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     public Double getBalance() {
