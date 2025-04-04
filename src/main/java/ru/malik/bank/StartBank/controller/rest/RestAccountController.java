@@ -1,6 +1,7 @@
 package ru.malik.bank.StartBank.controller.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +23,23 @@ public class RestAccountController {
     private final AccountService accountService;
     private final UserService userService;
 
+
     @Autowired
     public RestAccountController(AccountService accountService, UserService userService) {
         this.accountService = accountService;
         this.userService = userService;
     }
 
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<User>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+        Page<User> usersPage = userService.getUsers(page, size, sortField, sortDirection);
+        return ResponseEntity.ok(usersPage);
+    }
 
     @GetMapping
     public ResponseEntity<List<Account>> getAccounts(Principal principal) {
