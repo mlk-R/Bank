@@ -1,9 +1,32 @@
-#services:
-#  postgres:
-#    image: 'postgres:latest'
-#    environment:
-#      - 'POSTGRES_DB=Bank'
-#      - 'POSTGRES_PASSWORD=aXxer138'
-#      - 'POSTGRES_USER=postgres'
-#    ports:
-#      - '5432'
+version: '3.8'
+
+services:
+  startbank:
+    build: .
+    env_file: .env
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - startbank-network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=Bank
+      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    ports:
+      - "5432:5432"
+    networks:
+      - startbank-network
+
+networks:
+  startbank-network:
+    driver: bridge

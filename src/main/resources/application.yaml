@@ -3,9 +3,9 @@ spring:
     name: StartBank
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/Bank
-    username: postgres
-    password: aXxer138
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -16,4 +16,4 @@ spring:
       filter:
         enabled: true
 
-jwt_secret: "ThisIsASecretKeyThatIsLongEnoughToBeSecure123!"
+jwt_secret: ${JWT_SECRET}
