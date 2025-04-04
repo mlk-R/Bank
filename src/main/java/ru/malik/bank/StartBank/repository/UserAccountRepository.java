@@ -1,6 +1,8 @@
 package ru.malik.bank.StartBank.repository;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,7 +16,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccountView, Lo
     @Query(value = "SELECT u.id AS user_id, u.username, u.email, u.created_at, " +
             "a.id AS account_id, a.balance, a.account_type, a.card_number " +
             "from users u JOIN accounts a ON u.id = a.user_id",
+            countQuery = "SELECT count(*) FROM users u JOIN accounts a ON u.id = a.user_id",
             nativeQuery = true)
-    List<UserAccountView> getUserAccounts();
-
+    Page<UserAccountView> getUserAccounts(Pageable pageable);
 }

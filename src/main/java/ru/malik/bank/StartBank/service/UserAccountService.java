@@ -1,6 +1,9 @@
 package ru.malik.bank.StartBank.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.malik.bank.StartBank.entity.UserAccountView;
@@ -10,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class UserAccountService {
 
     private final UserAccountRepository userAccountRepository;
@@ -20,14 +22,19 @@ public class UserAccountService {
         this.userAccountRepository = userAccountRepository;
     }
 
-    public List<UserAccountView> getAllUserAccounts() {
-        return userAccountRepository.getUserAccounts();
+    @Transactional(readOnly = true)
+    public Page<UserAccountView> getAllUserAccounts(Pageable pageable) {
+        return userAccountRepository.getUserAccounts(pageable);
     }
 
-    public List<UserAccountView> getUserAccountsByBalance() {
-        List<UserAccountView> userAccounts = userAccountRepository.getUserAccounts();
-        return userAccounts.stream()
+    @Transactional(readOnly = true)
+    public Page<UserAccountView> getUserAccountsByBalance(Pageable pageable) {
+        Page<UserAccountView> userAccountsPage = userAccountRepository.getUserAccounts(pageable);
+        List<UserAccountView> filteredAccounts = userAccountsPage.getContent().stream()
                 .filter(account -> account.getBalance() > 1000)
                 .collect(Collectors.toList());
+
+        return new PageImpl<>(filteredAccounts, pageable, userAccountsPage.getTotalElements());
     }
 }
+
