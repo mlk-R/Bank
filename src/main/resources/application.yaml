@@ -15,8 +15,17 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
-  docker:
-    compose:
-      enabled: false
+#  docker:
+#    compose:
+#      enabled: false
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: bank-core
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+
 
 jwt_secret: ${JWT_SECRET}

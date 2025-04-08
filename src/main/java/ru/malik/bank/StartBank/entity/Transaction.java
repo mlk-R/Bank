@@ -36,4 +36,6 @@ public class Transaction {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "external_id", unique = true)
+    private String externalId;
 }
