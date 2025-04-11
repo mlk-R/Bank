@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.malik.bank.StartBank.dto.UserAccountDto;
 import ru.malik.bank.StartBank.entity.UserAccountView;
+import ru.malik.bank.StartBank.util.AccountBuilder;
 
 @SpringBootApplication
 @EnableScheduling
@@ -30,5 +31,10 @@ public class StartBankApplication {
 					mapper.map(src -> src.getId().getAccountId(), UserAccountDto::setAccountId);
 				});
 		return modelMapperUser;
+	}
+
+	@Bean
+	public AccountBuilder accountBuilder() {
+		return new AccountBuilder();
 	}
 }

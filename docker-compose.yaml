@@ -30,7 +30,6 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./init:/docker-entrypoint-initdb.d
     networks:
       - startbank-network
     restart: unless-stopped

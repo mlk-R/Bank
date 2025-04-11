@@ -10,6 +10,7 @@ import ru.malik.bank.StartBank.entity.enumEntity.TransactionType;
 import ru.malik.bank.StartBank.repository.AccountRepository;
 import ru.malik.bank.StartBank.repository.TransactionRepository;
 import ru.malik.bank.StartBank.service.kafka.KafkaMessageSender;
+import ru.malik.bank.StartBank.util.AccountBuilder;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -24,12 +25,14 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final KafkaMessageSender kafkaMessageSender;
+    private final AccountBuilder accountBuilder;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository, KafkaMessageSender kafkaMessageSender) {
+    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository, KafkaMessageSender kafkaMessageSender, AccountBuilder accountBuilder) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
         this.kafkaMessageSender = kafkaMessageSender;
+        this.accountBuilder = accountBuilder;
     }
 
     @Transactional(readOnly = true)
@@ -39,14 +42,14 @@ public class AccountService {
 
     @Transactional
     public Account createAccount(User user, BigDecimal initialBalance, String accountType) {
-        Account account = new Account();
-        account.setUser(user);
-        account.setBalance(initialBalance.ZERO);
-        account.setAccountType(accountType);
-        account.setCreatedAt(LocalDateTime.now());
-        account.setCardNumber(generateCardNumber());
-        account.setExpirationDate(LocalDate.now().plusYears(5));
-        account.setCvv(generateCVV());
+        Account account = accountBuilder.setUser(user)
+                .setBalance(initialBalance.ZERO)
+                .setAccountType(accountType)
+                .setCreatedAt(LocalDateTime.now())
+                .setCardNumber(generateCardNumber())
+                .setExpirationDate(LocalDate.now().plusYears(5))
+                .setCvv(generateCVV())
+                .build();
         return accountRepository.save(account);
     }
 
