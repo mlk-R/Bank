@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: deposits-1
+      author: malik
+      changes:
+        - createTable:
+            tableName: deposits
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: numeric(19,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: term
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: interest_rate
+                  type: numeric(10,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: deposits
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_deposits_user
+            onDelete: CASCADE
