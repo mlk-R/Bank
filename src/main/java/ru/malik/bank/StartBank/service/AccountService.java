@@ -9,6 +9,8 @@ import ru.malik.bank.StartBank.entity.User;
 import ru.malik.bank.StartBank.entity.enumEntity.TransactionType;
 import ru.malik.bank.StartBank.repository.AccountRepository;
 import ru.malik.bank.StartBank.repository.TransactionRepository;
+import ru.malik.bank.StartBank.service.kafka.KafkaMessageSender;
+import ru.malik.bank.StartBank.util.AccountBuilder;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,16 +20,19 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-@Transactional
 public class AccountService {
 
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
+    private final KafkaMessageSender kafkaMessageSender;
+    private final AccountBuilder accountBuilder;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository) {
+    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository, KafkaMessageSender kafkaMessageSender, AccountBuilder accountBuilder) {
         this.accountRepository = accountRepository;
         this.transactionRepository = transactionRepository;
+        this.kafkaMessageSender = kafkaMessageSender;
+        this.accountBuilder = accountBuilder;
     }
 
     @Transactional(readOnly = true)
@@ -35,19 +40,21 @@ public class AccountService {
         return accountRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public Account createAccount(User user, BigDecimal initialBalance, String accountType) {
-        Account account = new Account();
-        account.setUser(user);
-        account.setBalance(initialBalance.ZERO);
-        account.setAccountType(accountType);
-        account.setCreatedAt(LocalDateTime.now());
-        account.setCardNumber(generateCardNumber());
-        account.setExpirationDate(LocalDate.now().plusYears(5));
-        account.setCvv(generateCVV());
+        Account account = accountBuilder.setUser(user)
+                .setBalance(initialBalance.ZERO)
+                .setAccountType(accountType)
+                .setCreatedAt(LocalDateTime.now())
+                .setCardNumber(generateCardNumber())
+                .setExpirationDate(LocalDate.now().plusYears(5))
+                .setCvv(generateCVV())
+                .build();
         return accountRepository.save(account);
     }
 
     // Генерация номера карты итерационно
+
     private String generateCardNumber() {
         String lastCardNumber = accountRepository.findMaxCardNumber();
         if (lastCardNumber == null) {
@@ -63,6 +70,7 @@ public class AccountService {
         return String.format("%03d", random.nextInt(1000));
     }
 
+    @Transactional
     public void topUpAccount(Account account, BigDecimal amount) {
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
@@ -75,8 +83,10 @@ public class AccountService {
         transaction.setStatus("COMPLETED");
         transaction.setCreatedAt(LocalDateTime.now());
         transactionRepository.save(transaction);
+        kafkaMessageSender.sendMessage("transfer-topic", transaction);
     }
 
+    @Transactional
     public void withdraw(Account account, BigDecimal amount) {
         BigDecimal newBalance = account.getBalance().subtract(amount);
 
@@ -105,6 +115,7 @@ public class AccountService {
     }
 
     // Метод для перевода средств с одного аккаунта на другой по номеру карты
+    @Transactional
     public void transferFunds(Account sourceAccount, String targetCardNumber, BigDecimal amount) {
         // Ищем целевой аккаунт по номеру карты и извлекаем его из Optional
         Account targetAccount = accountRepository.findByCardNumber(targetCardNumber)

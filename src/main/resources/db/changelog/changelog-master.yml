@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/users.yml
+  - include:
+      file: db/changelog/accounts.yml
+  - include:
+      file: db/changelog/loans.yml
+  - include:
+      file: db/changelog/deposits.yml
+  - include:
+      file: db/changelog/transactions.yml

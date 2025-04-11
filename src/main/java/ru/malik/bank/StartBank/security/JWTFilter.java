@@ -1,4 +1,4 @@
-package ru.malik.bank.StartBank.config;
+package ru.malik.bank.StartBank.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -7,14 +7,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.malik.bank.StartBank.security.JWTUtil;
 
 
 import java.io.IOException;
@@ -39,7 +37,7 @@ public class JWTFilter extends OncePerRequestFilter {
             token = token.substring(7); // Убираем префикс "Bearer "
 
             try {
-                // Проверка токена (например, с помощью JWT)
+                // Проверка токена
                 Claims claims = Jwts.parser()
                         .setSigningKey(jwtUtil.getSigningKey())  // Используем ключ из JWTUtil
                         .parseClaimsJws(token)

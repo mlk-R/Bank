@@ -1,9 +1,0 @@
-#services:
-#  postgres:
-#    image: 'postgres:latest'
-#    environment:
-#      - 'POSTGRES_DB=Bank'
-#      - 'POSTGRES_PASSWORD=aXxer138'
-#      - 'POSTGRES_USER=postgres'
-#    ports:
-#      - '5432'

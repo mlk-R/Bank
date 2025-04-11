@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: transactions-1
+      author: malik
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: account_id
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: numeric(19,4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: external_id
+                  type: varchar(255)
+        - addUniqueConstraint:
+            tableName: transactions
+            columnNames: external_id
+            constraintName: uq_transactions_external_id
+        - addForeignKeyConstraint:
+            baseTableName: transactions
+            baseColumnNames: account_id
+            referencedTableName: accounts
+            referencedColumnNames: id
+            constraintName: fk_transactions_account
+            onDelete: CASCADE
+        - createIndex:
+            tableName: transactions
+            indexName: idx_external_id
+            columns:
+              - column:
+                  name: external_id
